@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit User</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex flex-col min-h-screen bg-gray-100">
+
+  <!-- Navbar -->
+  <nav class="bg-slate-900 text-white p-4 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-xl font-semibold">Edit User</h1>
+      <a href="index.html" class="text-sm hover:underline">← Back to Dashboard</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-grow flex items-center justify-center px-4">
+    <div class="max-w-md w-full bg-white shadow-lg rounded-xl p-6 mt-10">
+      <h2 class="text-lg font-semibold mb-4 text-gray-800">Update User Info</h2>
+
+      <form id="update-form" class="space-y-4">
+        <input type="hidden" id="user-id" />
+
+        <div>
+          <label class="block font-medium mb-1">Name</label>
+          <input id="name" type="text" required class="w-full border border-gray-300 p-2 rounded" />
+        </div>
+
+        <div>
+          <label class="block font-medium mb-1">Email</label>
+          <input id="email" type="email" required class="w-full border border-gray-300 p-2 rounded" />
+        </div>
+
+        <div>
+          <label class="block font-medium mb-1">City</label>
+          <input id="city" type="text" required class="w-full border border-gray-300 p-2 rounded" />
+        </div>
+
+        <button type="submit"
+          class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded">
+          Save Changes
+        </button>
+
+      </form>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-white mt-10">
+    <div class="container mx-auto px-4 py-6 text-center">
+      <p class="text-sm">&copy; Developer Mohib. All rights reserved.</p>
+      <p class="text-xs mt-1">This is a API Calling Form</p>
+    </div>
+  </footer>
+
+  <!-- Script to Load and Update User -->
+  <script>
+    const userId = new URLSearchParams(window.location.search).get("id");
+
+    // Populate form with existing user data
+    fetch(`https://jsonplaceholder.typicode.com/users/${userId}`)
+      .then(res => res.json())
+      .then(user => {
+        document.getElementById("user-id").value = user.id;
+        document.getElementById("name").value = user.name;
+        document.getElementById("email").value = user.email;
+        document.getElementById("city").value = user.address.city;
+      });
+
+    // Handle form submit
+    document.getElementById("update-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const updatedUser = {
+        id: userId,
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        address: {
+          city: document.getElementById("city").value
+        }
+      };
+
+      fetch(`https://jsonplaceholder.typicode.com/users/${userId}`, {
+        method: "PUT",
+        body: JSON.stringify(updatedUser),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+        .then(res => res.json())
+        .then(data => {
+          // Redirect to main page with update flag
+          window.location.href = `index.html?updated=true`;
+        });
+    });
+  </script>
+
+</body>
+</html>

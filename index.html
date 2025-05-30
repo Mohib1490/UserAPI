@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+    
+     <!-- Navbar
+    <nav class="bg-slate-900 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+          <h1 class="text-xl font-semibold">User Dashboard</h1>
+          <a href="update.html?id=1" class="text-sm hover:underline">Edit Sample</a>
+        </div>
+      </nav> -->
+      <!-- Navbar -->
+      <nav class="bg-slate-900 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+          <div class="text-2xl font-bold text-blue-600">User Directory</div>
+          <ul class="flex space-x-6 text-sm font-medium">
+            <li><a href="#" class="oklch(85.5% 0.138 181.071) hover:text-blue-600 transition">Home</a></li>
+            <li><a href="#" class="oklch(85.5% 0.138 181.071) hover:text-blue-600 transition">About</a></li>
+            <li><a href="#" class="oklch(85.5% 0.138 181.071) hover:text-blue-600 transition">Contact</a></li>
+          </ul>
+        </div>
+      </nav>
+
+  <!-- Main Content -->
+  <main class="container mx-auto mt-8 px-4">
+    <h2 class="text-2xl font-bold mb-4">User Dashboard</h2>
+    <div id="error-message" class="text-red-600 mb-4"></div>
+    <div id="user-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </main>
+
+  <script src="script.js">
+    function renderUserCard(user) {
+      const container = document.getElementById('user-container');
+
+      const card = document.createElement('div');
+      card.className = 'bg-gray-800 text-white rounded-lg shadow-lg p-6 mb-4';
+
+      card.innerHTML = `
+  <div class="flex items-center space-x-3 mb-2">
+    <img src="https://via.placeholder.com/40" alt="EMP" class="w-10 h-10 rounded-full border-2 border-white">
+    <h2 class="text-xl font-semibold">${user.name}</h2>
+  </div>
+  <p><strong>Email:</strong> ${user.email}</p>
+  <p><strong>City:</strong> ${user.address.city}</p>
+  <div class="mt-4 space-x-2">
+    <a href="update.html?id=${user.id}" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded">Update</a>
+    <button onclick="deleteUser(${user.id})" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">Delete</button>
+  </div>
+`;
+
+      container.appendChild(card);
+    }
+
+    function deleteUser(id) {
+      localStorage.removeItem(`user-${id}`);
+      location.reload(); // Re-render the cards after deletion
+    }
+
+    // ✅ Fetch and render
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then(res => res.json())
+      .then(users => {
+        users.forEach(user => {
+          const stored = localStorage.getItem(`user-${user.id}`);
+          if (stored) {
+            const updatedUser = JSON.parse(stored);
+            user.name = updatedUser.name;
+            user.email = updatedUser.email;
+            user.address.city = updatedUser.city;
+          }
+
+          renderUserCard(user);
+        });
+      });
+
+  </script>
+</body>
+
+<!-- Footer -->
+<footer class="bg-slate-900 text-white mt-10">
+    <div class="container mx-auto px-4 py-6 text-center">
+      <p class="text-sm">&copy; Developer Mohib. All rights reserved.</p>
+      <p class="text-xs mt-1">This is a API Calling Form</p>
+    </div>
+  </footer>
+  
+</html>
